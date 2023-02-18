@@ -46,6 +46,7 @@ async function bundleAPI({debug, watch}) {
                 __CHROMIUM_MV2__: false,
                 __CHROMIUM_MV3__: false,
                 __FIREFOX__: false,
+                __EDGE_MOBILE_ANDROID__: true,
                 __THUNDERBIRD__: false,
                 __TEST__: false,
             }),

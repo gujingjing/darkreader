@@ -10,6 +10,7 @@ import {createStyleSheetModifier} from './stylesheet-modifier';
 import {isShadowDomSupported, isSafari, isFirefox} from '../../utils/platform';
 
 declare const __THUNDERBIRD__: boolean;
+declare const __EDGE_MOBILE_ANDROID__: boolean;
 
 declare global {
     interface Document {
@@ -319,6 +320,9 @@ export function manageStyle(element: StyleElement, {update, loadingStart, loadin
                 logWarn(err);
                 isLoadingRules = false;
                 loadingEnd();
+                if(__EDGE_MOBILE_ANDROID__){
+                    update();
+                }
             });
             return null;
         }
