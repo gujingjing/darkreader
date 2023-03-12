@@ -5,9 +5,10 @@ import rollupPluginNodeResolve from '@rollup/plugin-node-resolve';
 import rollupPluginReplace from '@rollup/plugin-replace';
 /** @type {any} */
 import rollupPluginTypescript from '@rollup/plugin-typescript';
+import terser from '@rollup/plugin-terser';
 import typescript from 'typescript';
-import fs from 'node:fs';
-import os from 'node:os';
+import fs from 'fs';
+import os from 'os';
 import {createTask} from './task.js';
 import paths from './paths.js';
 const {rootDir, rootPath} = paths;
@@ -48,6 +49,7 @@ async function bundleAPI({debug, watch}) {
                 __THUNDERBIRD__: false,
                 __TEST__: false,
             }),
+            terser(),
         ].filter((x) => x)
     });
     watchFiles = bundle.watchFiles;

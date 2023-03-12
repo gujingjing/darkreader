@@ -104,7 +104,7 @@ export function cleanLoadingLinks() {
     rejectorsForLoadingLinks.clear();
 }
 
-export function manageStyle(element: StyleElement, {update, loadingStart, loadingEnd}: {update: () => void; loadingStart: () => void; loadingEnd: () => void}): StyleManager {
+export function manageStyle(element: StyleElement, {update, loadingStart, loadingEnd}: {update: () => void; loadingStart: () => void; loadingEnd: (success:boolean) => void}): StyleManager {
     const prevStyles: HTMLStyleElement[] = [];
     let next: Element | null = element;
     while ((next = next.nextElementSibling) && next.matches('.darkreader')) {
@@ -217,10 +217,11 @@ export function manageStyle(element: StyleElement, {update, loadingStart, loadin
 
     let isLoadingRules = false;
     let wasLoadingError = false;
+    let wasDetailLoadingError = false;
     const loadingLinkId = ++loadingLinkCounter;
 
     async function getRulesAsync(): Promise<CSSRuleList | null> {
-        let cssText: string;
+        let cssText: string|null = null;
         let cssBasePath: string;
 
         if (element instanceof HTMLLinkElement) {
@@ -261,8 +262,13 @@ export function manageStyle(element: StyleElement, {update, loadingStart, loadin
                     return cssRules;
                 }
             }
-
-            cssText = await loadText(element.href);
+            try{
+                cssText = await loadText(element.href);
+            }catch (err) {
+                logWarn(err);
+                console.log("gjj js loadText error");
+                wasDetailLoadingError = true;
+            }
             cssBasePath = getCSSBaseBath(element.href);
             if (cancelAsyncOperations) {
                 return null;
@@ -304,21 +310,25 @@ export function manageStyle(element: StyleElement, {update, loadingStart, loadin
                 logWarn('Detected dead-lock at details(), returning early to prevent it.');
                 return null;
             }
+            console.log("details isLoadingRules="+isLoadingRules+", wasLoadingError="+wasLoadingError);
             if (isLoadingRules || wasLoadingError) {
                 return null;
             }
             isLoadingRules = true;
+            console.log("details will loadingStart");
             loadingStart();
             getRulesAsync().then((results) => {
                 isLoadingRules = false;
-                loadingEnd();
+                console.log("gjj details will loadingEnd");
+                loadingEnd(results!=null&&!wasDetailLoadingError);
                 if (results) {
                     update();
                 }
             }).catch((err) => {
                 logWarn(err);
                 isLoadingRules = false;
-                loadingEnd();
+                console.log("gjj details will loadingEnd");
+                loadingEnd(wasDetailLoadingError);
             });
             return null;
         }
@@ -523,7 +533,7 @@ export function manageStyle(element: StyleElement, {update, loadingStart, loadin
         pause();
         removeNode(corsCopy);
         removeNode(syncStyle);
-        loadingEnd();
+        loadingEnd(true);
         if (rejectorsForLoadingLinks.has(loadingLinkId)) {
             const reject = rejectorsForLoadingLinks.get(loadingLinkId);
             rejectorsForLoadingLinks.delete(loadingLinkId);
