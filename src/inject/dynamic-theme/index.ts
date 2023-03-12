@@ -85,7 +85,6 @@ function stopStylePositionWatchers() {
 }
 
 function createStaticStyleOverrides() {
-    logWarn("createStaticStyleOverrides start to create static styles");
     const fallbackStyle = createOrUpdateStyle('darkreader--fallback', document);
     fallbackStyle.textContent = getModifiedFallbackStyle(filter!, {strict: true});
     document.head.insertBefore(fallbackStyle, document.head.firstChild);
@@ -234,8 +233,7 @@ function createDynamicStyleOverrides() {
     variablesStore.putRootVars(rootVarsStyle, filter!);
 
     styleManagers.forEach((manager) => manager.render(filter!, ignoredImageAnalysisSelectors!));
-    if (isDOMReady() && loadingStyles.size === 0) {
-        logWarn("will remove fallback style after stylemanager render");
+    if (loadingStyles.size === 0) {
         cleanFallbackStyle();
     }
     newManagers.forEach((manager) => manager.watch());
@@ -521,7 +519,6 @@ export function createOrUpdateDynamicThemeInternal(filterConfig: FilterConfig, d
             if (document.head) {
                 headObserver.disconnect();
                 if (isAnotherDarkReaderInstanceActive()) {
-                    logWarn("isAnotherDarkReaderInstanceActive will remove dynamic theme in observer");
                     removeDynamicTheme();
                     return;
                 }
@@ -560,9 +557,7 @@ export function removeDynamicTheme() {
     });
     shadowRootsWithOverrides.clear();
     forEach(styleManagers.keys(), (el) => removeManager(el));
-    if (loadingStyles.size === 0) {
-        loadingStyles.clear();
-    }
+    loadingStyles.clear();
     cleanLoadingLinks();
     forEach(document.querySelectorAll('.darkreader'), removeNode);
 

@@ -17,15 +17,6 @@ const isIFrame = (() => {
     }
 })();
 
-
-export function enableDarkMode(themeConfigs: string) {
-	var type = typeof themeConfigs;
-	let binaryString = atob(themeConfigs);
-	var obj = binaryString && JSON.parse(binaryString) || {};
-	if (!obj || !obj.themeOptions) return;
-	enable(obj.themeOptions, obj.fixes);
-}
-
 export function enable(themeOptions: Partial<Theme> | null = {}, fixes: DynamicThemeFix | null = null) {
     const theme = {...DEFAULT_THEME, ...themeOptions};
 
