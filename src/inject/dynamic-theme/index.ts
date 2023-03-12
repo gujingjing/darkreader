@@ -85,6 +85,7 @@ function stopStylePositionWatchers() {
 }
 
 function createStaticStyleOverrides() {
+    console.log("gjj js createStaticStyleOverrides will create static style");
     const fallbackStyle = createOrUpdateStyle('darkreader--fallback', document);
     fallbackStyle.textContent = getModifiedFallbackStyle(filter!, {strict: true});
     document.head.insertBefore(fallbackStyle, document.head.firstChild);
@@ -126,7 +127,12 @@ function createStaticStyleOverrides() {
     setupNodePositionWatcher(inlineStyle, 'inline');
 
     const overrideStyle = createOrUpdateStyle('darkreader--override');
+    var cssText='';
+    if(fixes && fixes.css){
+        console.log("gjj js createStaticStyleOverrides will replace css");
+    }
     overrideStyle.textContent = fixes && fixes.css ? replaceCSSTemplates(fixes.css) : '';
+    console.log("gjj js createStaticStyleOverrides fixes="+overrideStyle.textContent);
     document.head.appendChild(overrideStyle);
     setupNodePositionWatcher(overrideStyle, 'override');
 
@@ -203,6 +209,7 @@ function replaceCSSTemplates($cssText: string) {
 }
 
 function cleanFallbackStyle() {
+    console.log("gjj js cleanFallbackStyle will remove theme");
     const fallback = document.querySelector('.darkreader--fallback');
     if (fallback) {
         fallback.textContent = '';
@@ -233,7 +240,8 @@ function createDynamicStyleOverrides() {
     variablesStore.putRootVars(rootVarsStyle, filter!);
 
     styleManagers.forEach((manager) => manager.render(filter!, ignoredImageAnalysisSelectors!));
-    if (loadingStyles.size === 0) {
+    if (isDOMReady() && loadingStyles.size === 0 && errorStyles.size==0) {
+        console.log("gjj js loadingStyles.size==0 render will remove theme,styleManagers size="+styleManagers.size);
         cleanFallbackStyle();
     }
     newManagers.forEach((manager) => manager.watch());
@@ -252,27 +260,36 @@ function createDynamicStyleOverrides() {
 
 let loadingStylesCounter = 0;
 const loadingStyles = new Set<number>();
+const errorStyles = new Set<number>();
 
 function createManager(element: StyleElement) {
     const loadingStyleId = ++loadingStylesCounter;
     logInfo(`New manager for element, with loadingStyleID ${loadingStyleId}`, element);
     function loadingStart() {
-        if (!isDOMReady() || !documentIsVisible()) {
+        // if (!isDOMReady() || !documentIsVisible()) {
             loadingStyles.add(loadingStyleId);
+            console.log("gjj createManager loadingStart add new fetch loadingStyles size="+loadingStyles.size);
             logInfo(`Current amount of styles loading: ${loadingStyles.size}`);
 
             const fallbackStyle = document.querySelector('.darkreader--fallback')!;
             if (!fallbackStyle.textContent) {
                 fallbackStyle.textContent = getModifiedFallbackStyle(filter!, {strict: false});
             }
-        }
+        // }
     }
 
-    function loadingEnd() {
+    function loadingEnd(success:boolean =true) {
         loadingStyles.delete(loadingStyleId);
+        if(!success){
+            errorStyles.add(loadingStyleId);
+        }else{
+            errorStyles.delete(loadingStyleId);
+        }
+        console.log("gjj createManager loadingEnd will delete,success="+success+", loadingStyles size="+loadingStyles.size+", errorStyles size="+errorStyles.size);
         logInfo(`Removed loadingStyle ${loadingStyleId}, now awaiting: ${loadingStyles.size}`);
         logInfo(`To-do to be loaded`, loadingStyles);
-        if (loadingStyles.size === 0 && isDOMReady()) {
+        if (loadingStyles.size === 0 && errorStyles.size==0 && isDOMReady()) {
+            console.log("gjj js loadingEnd loadingStyles.size==0 will remove theme");
             cleanFallbackStyle();
         }
     }
@@ -315,7 +332,8 @@ const cancelRendering = function () {
 };
 
 function onDOMReady() {
-    if (loadingStyles.size === 0) {
+    if (loadingStyles.size === 0 && errorStyles.size==0) {
+        console.log("gjj js onDOMReady loadingStyles.size==0 will remove theme");
         cleanFallbackStyle();
         return;
     }
@@ -421,6 +439,7 @@ function addMetaListener() {
     metaObserver = new MutationObserver(() => {
         if (document.querySelector('meta[name="darkreader-lock"]')) {
             metaObserver.disconnect();
+            console.log("gjj js addMetaListener will remove theme");
             removeDynamicTheme();
         }
     });
@@ -502,6 +521,7 @@ export function createOrUpdateDynamicThemeInternal(filterConfig: FilterConfig, d
     isIFrame = iframe;
     if (document.head) {
         if (isAnotherDarkReaderInstanceActive()) {
+            console.log("gjj js isAnotherDarkReaderInstanceActive will remove theme 1");
             removeDynamicTheme();
             return;
         }
@@ -519,6 +539,7 @@ export function createOrUpdateDynamicThemeInternal(filterConfig: FilterConfig, d
             if (document.head) {
                 headObserver.disconnect();
                 if (isAnotherDarkReaderInstanceActive()) {
+                    console.log("gjj js isAnotherDarkReaderInstanceActive will remove theme 2");
                     removeDynamicTheme();
                     return;
                 }
@@ -557,7 +578,9 @@ export function removeDynamicTheme() {
     });
     shadowRootsWithOverrides.clear();
     forEach(styleManagers.keys(), (el) => removeManager(el));
-    loadingStyles.clear();
+    if(loadingStyles.size === 0 && errorStyles.size==0){
+        loadingStyles.clear();
+    }
     cleanLoadingLinks();
     forEach(document.querySelectorAll('.darkreader'), removeNode);
 
