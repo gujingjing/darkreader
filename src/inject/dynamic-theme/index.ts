@@ -85,7 +85,6 @@ function stopStylePositionWatchers() {
 }
 
 function createStaticStyleOverrides() {
-    console.log("gjj js createStaticStyleOverrides will create static style");
     const fallbackStyle = createOrUpdateStyle('darkreader--fallback', document);
     fallbackStyle.textContent = getModifiedFallbackStyle(filter!, {strict: true});
     document.head.insertBefore(fallbackStyle, document.head.firstChild);
@@ -127,12 +126,7 @@ function createStaticStyleOverrides() {
     setupNodePositionWatcher(inlineStyle, 'inline');
 
     const overrideStyle = createOrUpdateStyle('darkreader--override');
-    var cssText='';
-    if(fixes && fixes.css){
-        console.log("gjj js createStaticStyleOverrides will replace css");
-    }
     overrideStyle.textContent = fixes && fixes.css ? replaceCSSTemplates(fixes.css) : '';
-    console.log("gjj js createStaticStyleOverrides fixes="+overrideStyle.textContent);
     document.head.appendChild(overrideStyle);
     setupNodePositionWatcher(overrideStyle, 'override');
 
@@ -209,7 +203,6 @@ function replaceCSSTemplates($cssText: string) {
 }
 
 function cleanFallbackStyle() {
-    console.log("gjj js cleanFallbackStyle will remove theme");
     const fallback = document.querySelector('.darkreader--fallback');
     if (fallback) {
         fallback.textContent = '';
@@ -268,7 +261,6 @@ function createManager(element: StyleElement) {
     function loadingStart() {
         // if (!isDOMReady() || !documentIsVisible()) {
             loadingStyles.add(loadingStyleId);
-            console.log("gjj createManager loadingStart add new fetch loadingStyles size="+loadingStyles.size);
             logInfo(`Current amount of styles loading: ${loadingStyles.size}`);
 
             const fallbackStyle = document.querySelector('.darkreader--fallback')!;
@@ -278,7 +270,7 @@ function createManager(element: StyleElement) {
         // }
     }
 
-    function loadingEnd(success:boolean =true) {
+    function loadingEnd(success: boolean = true) {
         loadingStyles.delete(loadingStyleId);
         if(!success){
             errorStyles.add(loadingStyleId);

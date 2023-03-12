@@ -20,7 +20,6 @@ const isIFrame = (() => {
 export function enableDarkMode(themeConfigs: string) {
     var type = typeof themeConfigs;
     let binaryString = atob(themeConfigs);
-    console.log("gjj js enableDarkMode binaryString="+binaryString);
     var obj = binaryString && JSON.parse(binaryString) || {};
     if (!obj || !obj.themeOptions) return;
     enable(obj.themeOptions,obj.fixes);
@@ -28,7 +27,6 @@ export function enableDarkMode(themeConfigs: string) {
 
 export function enable(themeOptions: Partial<Theme> | null = {}, fixes: DynamicThemeFix | null = null) {
     const theme = {...DEFAULT_THEME, ...themeOptions};
-    console.log("gjj js enable fixes="+fixes);
     if (theme.engine !== ThemeEngine.dynamicTheme) {
         throw new Error('Theme engine is not supported.');
     }
@@ -43,7 +41,6 @@ export function isEnabled() {
 }
 
 export function disable() {
-    console.log("gjj js index.ts disable will remove theme");
     removeDynamicTheme();
     isDarkReaderEnabled = false;
 }
