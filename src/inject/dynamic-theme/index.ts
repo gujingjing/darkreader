@@ -273,6 +273,7 @@ function createManager(element: StyleElement) {
 
             const fallbackStyle = document.querySelector('.darkreader--fallback')!;
             if (!fallbackStyle.textContent) {
+                console.log("gjj loadingStart will appent fallback");
                 fallbackStyle.textContent = getModifiedFallbackStyle(filter!, {strict: false});
             }
         // }
@@ -578,9 +579,11 @@ export function removeDynamicTheme() {
     });
     shadowRootsWithOverrides.clear();
     forEach(styleManagers.keys(), (el) => removeManager(el));
-    if(loadingStyles.size === 0 && errorStyles.size==0){
-        loadingStyles.clear();
-    }
+    loadingStyles.clear();
+    errorStyles.clear();
+    // if(loadingStyles.size === 0 && errorStyles.size==0){
+    //     loadingStyles.clear();
+    // }
     cleanLoadingLinks();
     forEach(document.querySelectorAll('.darkreader'), removeNode);
 

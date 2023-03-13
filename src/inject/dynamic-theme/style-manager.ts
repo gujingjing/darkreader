@@ -262,13 +262,7 @@ export function manageStyle(element: StyleElement, {update, loadingStart, loadin
                     return cssRules;
                 }
             }
-            try{
-                cssText = await loadText(element.href);
-            }catch (err) {
-                logWarn(err);
-                console.log("gjj js loadText error");
-                wasDetailLoadingError = true;
-            }
+            cssText = await loadText(element.href);
             cssBasePath = getCSSBaseBath(element.href);
             if (cancelAsyncOperations) {
                 return null;
@@ -320,15 +314,16 @@ export function manageStyle(element: StyleElement, {update, loadingStart, loadin
             getRulesAsync().then((results) => {
                 isLoadingRules = false;
                 console.log("gjj details will loadingEnd");
-                loadingEnd(results!=null&&!wasDetailLoadingError);
+                loadingEnd(false);
                 if (results) {
                     update();
                 }
             }).catch((err) => {
                 logWarn(err);
                 isLoadingRules = false;
-                console.log("gjj details will loadingEnd");
-                loadingEnd(wasDetailLoadingError);
+                wasDetailLoadingError=true;
+                console.log("gjj details will loadingEnd err="+err);
+                loadingEnd(true);
             });
             return null;
         }

@@ -49,7 +49,7 @@ async function bundleAPI({debug, watch}) {
                 __THUNDERBIRD__: false,
                 __TEST__: false,
             }),
-            terser(),
+            // terser(),
         ].filter((x) => x)
     });
     watchFiles = bundle.watchFiles;

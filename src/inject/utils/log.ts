@@ -12,6 +12,7 @@ function sendLogToBG(level: 'info' | 'warn', ...args: any[]) {
 }
 
 export function logInfo(...args: any[]) {
+    console.info(...args);
     if (__DEBUG__) {
         console.info(...args);
         sendLogToBG('info', ...args);
