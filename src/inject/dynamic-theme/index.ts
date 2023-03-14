@@ -264,11 +264,12 @@ const errorStyles = new Set<number>();
 
 function createManager(element: StyleElement) {
     const loadingStyleId = ++loadingStylesCounter;
+    console.log("gjj createManager will createManager loadingStyles size="+loadingStyles.size);
     logInfo(`New manager for element, with loadingStyleID ${loadingStyleId}`, element);
     function loadingStart() {
         // if (!isDOMReady() || !documentIsVisible()) {
             loadingStyles.add(loadingStyleId);
-            console.log("gjj createManager loadingStart add new fetch loadingStyles size="+loadingStyles.size);
+            console.log("gjj createManager loadingStart add new fetch loadingStyles size="+loadingStyles.size+", errorStyles size="+errorStyles.size);
             logInfo(`Current amount of styles loading: ${loadingStyles.size}`);
 
             const fallbackStyle = document.querySelector('.darkreader--fallback')!;
@@ -333,8 +334,8 @@ const cancelRendering = function () {
 };
 
 function onDOMReady() {
+    console.log("gjj js onDOMReady "+", loadingStyles size="+loadingStyles.size+", errorStyles size="+errorStyles.size);
     if (loadingStyles.size === 0 && errorStyles.size==0) {
-        console.log("gjj js onDOMReady loadingStyles.size==0 will remove theme");
         cleanFallbackStyle();
         return;
     }
