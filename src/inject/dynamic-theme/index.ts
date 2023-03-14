@@ -264,7 +264,7 @@ const errorStyles = new Set<number>();
 
 function createManager(element: StyleElement) {
     const loadingStyleId = ++loadingStylesCounter;
-    console.log("gjj createManager will createManager loadingStyles size="+loadingStyles.size);
+    console.log("gjj createManager will createManager loadingStyles size="+loadingStyles.size+", errorStyles size="+errorStyles.size);
     logInfo(`New manager for element, with loadingStyleID ${loadingStyleId}`, element);
     function loadingStart() {
         // if (!isDOMReady() || !documentIsVisible()) {
@@ -339,6 +339,7 @@ function onDOMReady() {
         cleanFallbackStyle();
         return;
     }
+    errorStyles.clear();
     logWarn(`DOM is ready, but still have styles being loaded.`, loadingStyles);
 }
 
