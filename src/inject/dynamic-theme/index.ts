@@ -325,7 +325,6 @@ const cancelRendering = function () {
 
 function onDOMReady() {
     if (loadingStyles.size === 0 && errorStyles.size==0) {
-        console.log("gjj js onDOMReady loadingStyles.size==0 will remove theme");
         cleanFallbackStyle();
         return;
     }

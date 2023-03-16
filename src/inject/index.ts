@@ -40,7 +40,6 @@ function sendMessage(message: Message) {
         if (response === 'unsupportedSender') {
             removeStyle();
             removeSVGFilter();
-            console.log("gjj js index.ts responseHandler will remove theme");
             removeDynamicTheme();
             cleanup();
         }
@@ -79,7 +78,6 @@ function onMessage({type, data}: Message) {
         case MessageType.BG_ADD_CSS_FILTER:
         case MessageType.BG_ADD_STATIC_THEME: {
             const {css, detectDarkTheme} = data;
-            console.log("gjj js index.ts message BG_ADD_STATIC_THEME will remove theme");
             removeDynamicTheme();
             createOrUpdateStyle(css, type === MessageType.BG_ADD_STATIC_THEME ? 'static' : 'filter');
             if (detectDarkTheme) {
@@ -94,7 +92,6 @@ function onMessage({type, data}: Message) {
         }
         case MessageType.BG_ADD_SVG_FILTER: {
             const {css, svgMatrix, svgReverseMatrix, detectDarkTheme} = data;
-            console.log("gjj js index.ts message BG_ADD_SVG_FILTER will remove theme");
             removeDynamicTheme();
             createOrUpdateSVGFilter(svgMatrix, svgReverseMatrix);
             createOrUpdateStyle(css, 'filter');
@@ -116,7 +113,6 @@ function onMessage({type, data}: Message) {
             if (detectDarkTheme) {
                 runDarkThemeDetector((hasDarkTheme) => {
                     if (hasDarkTheme) {
-                        console.log("gjj js index.ts message BG_ADD_DYNAMIC_THEME will remove theme");
                         removeDynamicTheme();
                         onDarkThemeDetected();
                     }
