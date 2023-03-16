@@ -211,7 +211,7 @@ function cleanFallbackStyle() {
 
 function createDynamicStyleOverrides() {
     cancelRendering();
-
+    errorStyles.clear();
     const allStyles = getManageableStyles(document);
 
     const newManagers = allStyles
@@ -570,9 +570,8 @@ export function removeDynamicTheme() {
     });
     shadowRootsWithOverrides.clear();
     forEach(styleManagers.keys(), (el) => removeManager(el));
-    if(loadingStyles.size === 0 && errorStyles.size==0){
-        loadingStyles.clear();
-    }
+    loadingStyles.clear();
+    errorStyles.clear();
     cleanLoadingLinks();
     forEach(document.querySelectorAll('.darkreader'), removeNode);
 
