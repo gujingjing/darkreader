@@ -234,7 +234,6 @@ function createDynamicStyleOverrides() {
 
     styleManagers.forEach((manager) => manager.render(filter!, ignoredImageAnalysisSelectors!));
     if (isDOMReady() && loadingStyles.size === 0 && errorStyles.size==0) {
-        console.log("gjj js loadingStyles.size==0 render will remove theme,styleManagers size="+styleManagers.size);
         cleanFallbackStyle();
     }
     newManagers.forEach((manager) => manager.watch());
@@ -277,11 +276,9 @@ function createManager(element: StyleElement) {
         }else{
             errorStyles.delete(loadingStyleId);
         }
-        console.log("gjj createManager loadingEnd will delete,success="+success+", loadingStyles size="+loadingStyles.size+", errorStyles size="+errorStyles.size);
         logInfo(`Removed loadingStyle ${loadingStyleId}, now awaiting: ${loadingStyles.size}`);
         logInfo(`To-do to be loaded`, loadingStyles);
         if (loadingStyles.size === 0 && errorStyles.size==0 && isDOMReady()) {
-            console.log("gjj js loadingEnd loadingStyles.size==0 will remove theme");
             cleanFallbackStyle();
         }
     }
@@ -430,7 +427,6 @@ function addMetaListener() {
     metaObserver = new MutationObserver(() => {
         if (document.querySelector('meta[name="darkreader-lock"]')) {
             metaObserver.disconnect();
-            console.log("gjj js addMetaListener will remove theme");
             removeDynamicTheme();
         }
     });
@@ -512,7 +508,6 @@ export function createOrUpdateDynamicThemeInternal(filterConfig: FilterConfig, d
     isIFrame = iframe;
     if (document.head) {
         if (isAnotherDarkReaderInstanceActive()) {
-            console.log("gjj js isAnotherDarkReaderInstanceActive will remove theme 1");
             removeDynamicTheme();
             return;
         }
@@ -530,7 +525,6 @@ export function createOrUpdateDynamicThemeInternal(filterConfig: FilterConfig, d
             if (document.head) {
                 headObserver.disconnect();
                 if (isAnotherDarkReaderInstanceActive()) {
-                    console.log("gjj js isAnotherDarkReaderInstanceActive will remove theme 2");
                     removeDynamicTheme();
                     return;
                 }

@@ -266,7 +266,6 @@ export function manageStyle(element: StyleElement, {update, loadingStart, loadin
                 cssText = await loadText(element.href);
             }catch (err) {
                 logWarn(err);
-                console.log("gjj js loadText error");
                 wasDetailLoadingError = true;
             }
             cssBasePath = getCSSBaseBath(element.href);
@@ -319,7 +318,6 @@ export function manageStyle(element: StyleElement, {update, loadingStart, loadin
             loadingStart();
             getRulesAsync().then((results) => {
                 isLoadingRules = false;
-                console.log("gjj details will loadingEnd");
                 loadingEnd(results!=null&&!wasDetailLoadingError);
                 if (results) {
                     update();
@@ -327,7 +325,6 @@ export function manageStyle(element: StyleElement, {update, loadingStart, loadin
             }).catch((err) => {
                 logWarn(err);
                 isLoadingRules = false;
-                console.log("gjj details will loadingEnd");
                 loadingEnd(wasDetailLoadingError);
             });
             return null;
