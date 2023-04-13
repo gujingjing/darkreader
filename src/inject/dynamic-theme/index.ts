@@ -157,10 +157,14 @@ function createStaticStyleOverrides() {
         // Notify the dedicated injector of the data.
         document.dispatchEvent(new CustomEvent('__darkreader__stylesheetProxy__arg', {detail: injectProxyArg}));
     } else {
-        const proxyScript = createOrUpdateScript('darkreader--proxy');
-        proxyScript.append(`(${injectProxy})(${injectProxyArg})`);
-        document.head.insertBefore(proxyScript, rootVarsStyle.nextSibling);
-        proxyScript.remove();
+        try {
+            const proxyScript = createOrUpdateScript('darkreader--proxy');
+            proxyScript.append(`(${injectProxy})(${injectProxyArg})`);
+            document.head.insertBefore(proxyScript, rootVarsStyle.nextSibling);
+            proxyScript.remove();
+          } catch (e) {
+            console.error(e);
+          }
     }
 }
 
@@ -257,7 +261,8 @@ function createManager(element: StyleElement) {
     const loadingStyleId = ++loadingStylesCounter;
     logInfo(`New manager for element, with loadingStyleID ${loadingStyleId}`, element);
     function loadingStart() {
-        if (!isDOMReady() || !documentIsVisible()) {
+        loadingStyles.clear();
+//         if (!isDOMReady() || !documentIsVisible()) {
             loadingStyles.add(loadingStyleId);
             logInfo(`Current amount of styles loading: ${loadingStyles.size}`);
 
@@ -265,7 +270,7 @@ function createManager(element: StyleElement) {
             if (!fallbackStyle.textContent) {
                 fallbackStyle.textContent = getModifiedFallbackStyle(filter!, {strict: false});
             }
-        }
+//         }
     }
 
     function loadingEnd() {
